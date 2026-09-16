@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: maplexd-downloader
+    runtime: python
+    buildCommand: pip install -r backend/requirements.txt
+    startCommand: gunicorn backend.server:app
+    envVars:
+      - key: DOWNLOAD_KEY
+        generateValue: true
+      - key: DISCORD_WEBHOOK_URL
+        sync: false
