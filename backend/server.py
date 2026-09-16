@@ -49,6 +49,12 @@ def download_and_send(url: str, media_format: str) -> None:
             "no_warnings": True,
             "outtmpl": str(output_dir / "%(title)s.%(ext)s"),
             "restrictfilenames": True,
+            "remote_components": {"ejs"},
+            "extractor_args": {
+                "youtube": {
+                    "player_client": ["web_safari", "web_embedded"],
+                }
+            },
         }
         if media_format == "mp3":
             options.update(
