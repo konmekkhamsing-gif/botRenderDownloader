@@ -80,3 +80,23 @@ Set-ExecutionPolicy -Scope Process Bypass
 ```
 
 หลังเพิ่ม Secret แล้วกด **Manual Deploy → Deploy latest commit** ใหม่
+
+## รัน Backend บนคอมตัวเอง
+
+เปิด PowerShell แล้วรัน:
+
+```powershell
+cd D:\MP3MP4YTDOWNLOAD
+.\.venv\Scripts\Activate.ps1
+$env:DOWNLOAD_KEY = "ตั้งคีย์ลับใหม่เอง"
+$env:DISCORD_WEBHOOK_URL = "ใส่ Discord Webhook URL ใหม่ของคุณ"
+.\run-backend.ps1
+```
+
+ทดสอบในเบราว์เซอร์:
+
+```text
+http://127.0.0.1:10000/health
+```
+
+ควรแสดง `{"status":"ok"}` เครื่องที่รัน BotGhost จะยังเรียก `127.0.0.1` ไม่ได้จนกว่าจะเปิดทางด้วย Tunnel เช่น Cloudflare Tunnel

@@ -59,6 +59,9 @@ def download_and_send(url: str, media_format: str) -> None:
                 }
             },
         }
+        local_ffmpeg = Path(__file__).resolve().parents[1] / "ffmpeg" / "ffmpeg.exe"
+        if local_ffmpeg.exists():
+            options["ffmpeg_location"] = str(local_ffmpeg.parent)
         if COOKIES_B64:
             try:
                 cookies_path.write_bytes(base64.b64decode(COOKIES_B64, validate=True))
