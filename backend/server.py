@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+import base64
 import threading
 import tempfile
 from pathlib import Path
@@ -14,6 +15,7 @@ from flask import Flask, jsonify, request
 app = Flask(__name__)
 DOWNLOAD_KEY = os.environ.get("DOWNLOAD_KEY", "")
 DISCORD_WEBHOOK_URL = os.environ.get("DISCORD_WEBHOOK_URL", "")
+COOKIES_B64 = os.environ.get("YTDLP_COOKIES_B64", "")
 MAX_FILE_SIZE = 24 * 1024 * 1024
 
 
@@ -43,6 +45,7 @@ def send_to_discord(file_path: Path, media_format: str) -> None:
 def download_and_send(url: str, media_format: str) -> None:
     with tempfile.TemporaryDirectory(prefix="maplexd-") as temp_dir:
         output_dir = Path(temp_dir)
+        cookies_path = output_dir / "cookies.txt"
         options: dict[str, object] = {
             "noplaylist": True,
             "quiet": True,
@@ -56,6 +59,12 @@ def download_and_send(url: str, media_format: str) -> None:
                 }
             },
         }
+        if COOKIES_B64:
+            try:
+                cookies_path.write_bytes(base64.b64decode(COOKIES_B64, validate=True))
+            except (ValueError, OSError) as error:
+                raise ValueError("YTDLP_COOKIES_B64 ไม่ใช่ Base64 ที่ถูกต้อง") from error
+            options["cookiefile"] = str(cookies_path)
         if media_format == "mp3":
             options.update(
                 {

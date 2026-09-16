@@ -54,6 +54,7 @@ Set-ExecutionPolicy -Scope Process Bypass
 3. ตั้งค่า Environment Variable ใน Render:
    - `DISCORD_WEBHOOK_URL`: URL ของ Discord Webhook
    - `DOWNLOAD_KEY`: คีย์ลับสำหรับเรียก API
+   - `YTDLP_COOKIES_B64`: เนื้อหา `cookies.txt` ที่แปลงเป็น Base64 (ถ้าจำเป็น)
 4. ใน BotGhost ใช้ HTTP Request:
    - Method: `POST`
    - URL: `https://ชื่อบริการ.onrender.com/download`
@@ -67,3 +68,15 @@ Set-ExecutionPolicy -Scope Process Bypass
      ```
 
 บอทจะส่งไฟล์ MP4/MP3 กลับเข้า Channel ที่สร้าง Webhook ไว้ ไฟล์เกิน 24 MB จะถูกปฏิเสธเพื่อไม่ให้เกิดการอัปโหลดค้าง ใช้กับเนื้อหาที่มีสิทธิ์ดาวน์โหลดเท่านั้น
+
+### Cookie สำหรับแพลตฟอร์มที่ต้องยืนยันตัวตน
+
+อย่าส่ง Cookie ผ่านแชทหรือ commit ลง GitHub ใช้เฉพาะ Cookie ของบัญชีที่คุณมีสิทธิ์ใช้ และทราบว่า Cookie อาจทำให้บัญชีถูกเข้าถึงได้ หากรั่วไหลให้ logout ทุกอุปกรณ์/เปลี่ยนรหัสผ่านทันที
+
+แปลงไฟล์เป็น Base64 ในเครื่อง แล้วนำค่าที่ได้ไปใส่เป็น Secret `YTDLP_COOKIES_B64` บน Render:
+
+```powershell
+[Convert]::ToBase64String([IO.File]::ReadAllBytes("cookies.txt"))
+```
+
+หลังเพิ่ม Secret แล้วกด **Manual Deploy → Deploy latest commit** ใหม่
